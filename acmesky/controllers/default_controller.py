@@ -13,6 +13,7 @@ import requests
 
 camunda_base_url = "http://camunda_acmesky:8080/engine-rest"
 
+
 def buy_offer(offer_purchase_data=None):  # noqa: E501
     """buyOffer
 
@@ -28,19 +29,39 @@ def buy_offer(offer_purchase_data=None):  # noqa: E501
     return 'do some magic!'
 
 
-def publish_last_minute_offer(flight=None):  # noqa: E501
+def publish_last_minute_offer(flights=None):  # noqa: E501
     """publishLastMinuteOffer
 
     Allows flight companies to notify ACMESky of the presence of new last minute offers. API for: Flight Company # noqa: E501
 
-    :param flight: 
-    :type flight: list | bytes
+    :param flights:
+    :type flights: list | bytes
 
     :rtype: None
     """
     if connexion.request.is_json:
-        flight = [Flight.from_dict(d) for d in connexion.request.get_json()]  # noqa: E501
-    return 'do some magic!'
+        flights = [Flight.from_dict(d) for d in connexion.request.get_json()]  # noqa: E501
+
+    for flight in flights:
+        flight.departure_datetime = flight.departure_datetime.isoformat()
+        flight.arrival_datetime = flight.arrival_datetime.isoformat()
+
+    flights_dict = [f.to_dict() for f in flights]
+
+    camunda_message = {
+        "messageName": "offers",
+        "processVariables": {
+            "offers": {
+                "type": "String",
+                "value": json.dumps(flights_dict)
+            },
+            "valueInfo": {
+                "transient": True
+            }
+        }
+    }
+    r = requests.post(camunda_base_url+"/message", json=camunda_message)
+    return None, r.status_code
 
 
 def register_interest(interest=None):  # noqa: E501
@@ -61,7 +82,6 @@ def register_interest(interest=None):  # noqa: E501
     interest_dict['max_comeback_date'] = interest.max_comeback_date.isoformat()
 
     # Send message to Camunda
-    #camunda_client.correlate_message("interest", process_variables={"interest": json.dumps(interest_dict)})
     camunda_message = {
         "messageName": "interest",
         "processVariables": {
@@ -74,7 +94,8 @@ def register_interest(interest=None):  # noqa: E501
         }
     }
     r = requests.post(camunda_base_url+"/message", json=camunda_message)
-    return (None, r.status_code)
+    return None, r.status_code
+
 
 def send_payment_information(payment_information=None):  # noqa: E501
     """sendPaymentInformation
