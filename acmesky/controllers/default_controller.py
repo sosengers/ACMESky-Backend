@@ -10,6 +10,9 @@ from acmesky import util
 
 import json
 import requests
+import logging
+
+from acmesky.camunda_connector.camunda_rest_client import send_string_as_correlate_message
 
 camunda_base_url = "http://camunda_acmesky:8080/engine-rest"
 
@@ -48,19 +51,7 @@ def publish_last_minute_offer(flights=None):  # noqa: E501
 
     flights_dict = [f.to_dict() for f in flights]
 
-    camunda_message = {
-        "messageName": "offers",
-        "processVariables": {
-            "offers": {
-                "type": "String",
-                "value": json.dumps(flights_dict)
-            },
-            "valueInfo": {
-                "transient": True
-            }
-        }
-    }
-    r = requests.post(camunda_base_url+"/message", json=camunda_message)
+    r = send_string_as_correlate_message("offers", [("offers", json.dumps(flights_dict))])
     return None, r.status_code
 
 
@@ -82,18 +73,10 @@ def register_interest(interest=None):  # noqa: E501
     interest_dict['max_comeback_date'] = interest.max_comeback_date.isoformat()
 
     # Send message to Camunda
-    camunda_message = {
-        "messageName": "interest",
-        "processVariables": {
-            "interest": {
-                "type": "String",
-                "value": json.dumps(interest_dict)},
-                "valueInfo": {
-                    "transient": True
-                }
-        }
-    }
-    r = requests.post(camunda_base_url+"/message", json=camunda_message)
+    r = send_string_as_correlate_message("interest", [("interest", json.dumps(interest_dict))])
+    if r.status_code >= 300:
+        connexion.ap
+        logging.error(f"Fail to send message to Camunda. Response: {r.text}")
     return None, r.status_code
 
 
