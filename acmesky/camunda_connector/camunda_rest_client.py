@@ -3,8 +3,6 @@ from os import environ
 
 BASE_URL: str = environ.get("CAMUNDA_BASE_URL", "http://camunda_acmesky:8080/engine-rest")
 
-import logging
-
 def send_string_as_correlate_message(name: str, process_variables: list[tuple[str, str]]):
     process_variables_dict = {}
     for variable in process_variables:
