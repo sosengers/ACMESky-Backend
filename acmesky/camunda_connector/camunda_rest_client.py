@@ -11,11 +11,12 @@ def send_string_as_correlate_message(name: str, process_variables: list[tuple[st
 
         process_variables_dict[variable_name] = {
             "value": variable_value,
-            "type": "String",
-            "valueInfo": {
-                "transient": True
-            }
+            "type": "String"
         }
+
+    process_variables_dict["valueInfo"] = {
+        "transient": True
+    }
 
     camunda_message = {
         "messageName": name,
