@@ -75,7 +75,6 @@ def register_interest(interest=None):  # noqa: E501
     # Send message to Camunda
     r = send_string_as_correlate_message("interest", [("interest", json.dumps(interest_dict))])
     if r.status_code >= 300:
-        connexion.ap
         logging.error(f"Fail to send message to Camunda. Response: {r.text}")
     return None, r.status_code
 
