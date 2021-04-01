@@ -1,6 +1,6 @@
 import requests
 from os import environ
-
+import logging
 BASE_URL: str = environ.get("CAMUNDA_BASE_URL", "http://camunda_acmesky:8080/engine-rest")
 
 def send_string_as_correlate_message(name: str, process_variables: list[tuple[str, str]]):
@@ -22,6 +22,6 @@ def send_string_as_correlate_message(name: str, process_variables: list[tuple[st
         "messageName": name,
         "processVariables": process_variables_dict
     }
-
+    logging.info(camunda_message)
     return requests.post(BASE_URL+"/message", json=camunda_message)
 

@@ -40,11 +40,13 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/OfferPurchaseData'
-          application/xml:
-            schema:
-              properties: {}
-              type: object
       responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BuyOfferResponse'
+          description: OK
         "400":
           content:
             application/json:
@@ -245,4 +247,15 @@ components:
       required:
       - description
       title: Error
+      type: object
+    BuyOfferResponse:
+      example:
+        pay_offer_url: pay_offer_url
+      properties:
+        pay_offer_url:
+          minLength: 1
+          type: string
+      required:
+      - pay_offer_url
+      title: BuyOfferResponse
       type: object
