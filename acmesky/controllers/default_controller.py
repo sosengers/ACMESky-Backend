@@ -29,7 +29,7 @@ def buy_offer(offer_purchase_data=None):  # noqa: E501
     """
     if connexion.request.is_json:
         offer_purchase_data = OfferPurchaseData.from_dict(connexion.request.get_json())  # noqa: E501
-    logging.error(offer_purchase_data.to_str())
+    
     r = send_string_as_correlate_message("offer_purchase_data", [("offer_purchase_data", json.dumps(offer_purchase_data.to_dict()))])
     return None, r.status_code
 
@@ -93,4 +93,6 @@ def send_payment_information(payment_information=None):  # noqa: E501
     """
     if connexion.request.is_json:
         payment_information = PaymentInformation.from_dict(connexion.request.get_json())  # noqa: E501
+
+    r = send_string_as_correlate_message("payment_status", [("payment_status", json.dumps(payment_information.to_dict()))])
     return 'do some magic!'
