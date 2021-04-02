@@ -1,3 +1,4 @@
+from acmesky.models.buy_offer_response import BuyOfferResponse
 import connexion
 import six
 
@@ -31,7 +32,20 @@ def buy_offer(offer_purchase_data=None):  # noqa: E501
         offer_purchase_data = OfferPurchaseData.from_dict(connexion.request.get_json())  # noqa: E501
     
     r = send_string_as_correlate_message("offer_purchase_data", [("offer_purchase_data", json.dumps(offer_purchase_data.to_dict()))])
-    return None, r.status_code
+    return BuyOfferResponse(
+        pay_offer_url=hash(
+            offer_purchase_data.offer_code,
+            offer_purchase_data.name,
+            offer_purchase_data.surname,
+            hash(
+                offer_purchase_data.address.street,
+                offer_purchase_data.address.number,
+                offer_purchase_data.address.city,
+                offer_purchase_data.address.zip_code,
+                offer_purchase_data.address.country
+            )
+        )
+    ), r.status_code
 
 
 def publish_last_minute_offer(flights=None):  # noqa: E501
@@ -95,4 +109,4 @@ def send_payment_information(payment_information=None):  # noqa: E501
         payment_information = PaymentInformation.from_dict(connexion.request.get_json())  # noqa: E501
 
     r = send_string_as_correlate_message("payment_status", [("payment_status", json.dumps(payment_information.to_dict()))])
-    return 'do some magic!'
+    return None, r.status_code
