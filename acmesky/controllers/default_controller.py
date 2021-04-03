@@ -44,7 +44,7 @@ def buy_offer(offer_purchase_data=None):  # noqa: E501
                 offer_purchase_data.address.country))
         )
         ))
-    logging.info(f"HASH: { pay_offer_url}")
+    #logging.error(f"DATA: {offer_purchase_data.to_dict()}")
     return BuyOfferResponse(pay_offer_url=pay_offer_url)
 
 
@@ -109,4 +109,6 @@ def send_payment_information(payment_information=None):  # noqa: E501
         payment_information = PaymentInformation.from_dict(connexion.request.get_json())  # noqa: E501
 
     r = send_string_as_correlate_message("payment_status", [("payment_status", json.dumps(payment_information.to_dict()))])
+    if r.status_code >= 300:
+        logging.error(f"Fail to send message to Camunda. Response: {r.text}")
     return None, r.status_code
