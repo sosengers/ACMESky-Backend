@@ -30,22 +30,22 @@ def buy_offer(offer_purchase_data=None):  # noqa: E501
     """
     if connexion.request.is_json:
         offer_purchase_data = OfferPurchaseData.from_dict(connexion.request.get_json())  # noqa: E501
-    
+
     r = send_string_as_correlate_message("offer_purchase_data", [("offer_purchase_data", json.dumps(offer_purchase_data.to_dict()))])
-    return BuyOfferResponse(
-        pay_offer_url=hash(
+    pay_offer_url=str(hash((
             offer_purchase_data.offer_code,
             offer_purchase_data.name,
             offer_purchase_data.surname,
-            hash(
+            hash((
                 offer_purchase_data.address.street,
                 offer_purchase_data.address.number,
                 offer_purchase_data.address.city,
                 offer_purchase_data.address.zip_code,
-                offer_purchase_data.address.country
-            )
+                offer_purchase_data.address.country))
         )
-    ), r.status_code
+        ))
+    logging.info(f"HASH: { pay_offer_url}")
+    return BuyOfferResponse(pay_offer_url=pay_offer_url)
 
 
 def publish_last_minute_offer(flights=None):  # noqa: E501
