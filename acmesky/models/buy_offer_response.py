@@ -15,21 +15,21 @@ class BuyOfferResponse(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, pay_offer_url=None):  # noqa: E501
+    def __init__(self, communication_code=None):  # noqa: E501
         """BuyOfferResponse - a model defined in OpenAPI
 
-        :param pay_offer_url: The pay_offer_url of this BuyOfferResponse.  # noqa: E501
-        :type pay_offer_url: str
+        :param communication_code: The communication_code of this BuyOfferResponse.  # noqa: E501
+        :type communication_code: str
         """
         self.openapi_types = {
-            'pay_offer_url': str
+            'communication_code': str
         }
 
         self.attribute_map = {
-            'pay_offer_url': 'pay_offer_url'
+            'communication_code': 'communication_code'
         }
 
-        self._pay_offer_url = pay_offer_url
+        self._communication_code = communication_code
 
     @classmethod
     def from_dict(cls, dikt) -> 'BuyOfferResponse':
@@ -43,26 +43,26 @@ class BuyOfferResponse(Model):
         return util.deserialize_model(dikt, cls)
 
     @property
-    def pay_offer_url(self):
-        """Gets the pay_offer_url of this BuyOfferResponse.
+    def communication_code(self):
+        """Gets the communication_code of this BuyOfferResponse.
 
 
-        :return: The pay_offer_url of this BuyOfferResponse.
+        :return: The communication_code of this BuyOfferResponse.
         :rtype: str
         """
-        return self._pay_offer_url
+        return self._communication_code
 
-    @pay_offer_url.setter
-    def pay_offer_url(self, pay_offer_url):
-        """Sets the pay_offer_url of this BuyOfferResponse.
+    @communication_code.setter
+    def communication_code(self, communication_code):
+        """Sets the communication_code of this BuyOfferResponse.
 
 
-        :param pay_offer_url: The pay_offer_url of this BuyOfferResponse.
-        :type pay_offer_url: str
+        :param communication_code: The communication_code of this BuyOfferResponse.
+        :type communication_code: str
         """
-        if pay_offer_url is None:
-            raise ValueError("Invalid value for `pay_offer_url`, must not be `None`")  # noqa: E501
-        if pay_offer_url is not None and len(pay_offer_url) < 1:
-            raise ValueError("Invalid value for `pay_offer_url`, length must be greater than or equal to `1`")  # noqa: E501
+        if communication_code is None:
+            raise ValueError("Invalid value for `communication_code`, must not be `None`")  # noqa: E501
+        if communication_code is not None and len(communication_code) < 1:
+            raise ValueError("Invalid value for `communication_code`, length must be greater than or equal to `1`")  # noqa: E501
 
-        self._pay_offer_url = pay_offer_url
+        self._communication_code = communication_code

@@ -31,31 +31,34 @@ def buy_offer(offer_purchase_data=None):  # noqa: E501
     """
     if connexion.request.is_json:
         offer_purchase_data = OfferPurchaseData.from_dict(connexion.request.get_json())  # noqa: E501
-    pay_offer_url=str(hash((
-            offer_purchase_data.offer_code,
-            offer_purchase_data.name,
-            offer_purchase_data.surname,
-            hash((
-                offer_purchase_data.address.street,
-                offer_purchase_data.address.number,
-                offer_purchase_data.address.city,
-                offer_purchase_data.address.zip_code,
-                offer_purchase_data.address.country))
-        )
-        ))
+    communication_code = str(hash((
+        offer_purchase_data.offer_code,
+        offer_purchase_data.name,
+        offer_purchase_data.surname,
+        hash((
+            offer_purchase_data.address.street,
+            offer_purchase_data.address.number,
+            offer_purchase_data.address.city,
+            offer_purchase_data.address.zip_code,
+            offer_purchase_data.address.country))
+    )
+    ))
 
-    r = send_string_as_correlate_message("offer_purchase_data", [("offer_purchase_data", json.dumps(offer_purchase_data.to_dict()))])
-        #logging.error(f"DATA: {offer_purchase_data.to_dict()}")
-    return BuyOfferResponse(pay_offer_url=pay_offer_url)
+    r = send_string_as_correlate_message("offer_purchase_data",
+                                         [("offer_purchase_data", json.dumps(offer_purchase_data.to_dict()))])
+    # logging.error(f"DATA: {offer_purchase_data.to_dict()}")
+    return BuyOfferResponse(communication_code=communication_code)
 
 
-def publish_last_minute_offer(flights=None):  # noqa: E501
+def publish_last_minute_offer(company_name, flight=None):  # noqa: E501
     """publishLastMinuteOffer
 
     Allows flight companies to notify ACMESky of the presence of new last minute offers. API for: Flight Company # noqa: E501
 
-    :param flights:
-    :type flights: list | bytes
+    :param company_name: Name of the flight company
+    :type company_name: str
+    :param flight:
+    :type flight: list | bytes
 
     :rtype: None
     """
@@ -68,7 +71,8 @@ def publish_last_minute_offer(flights=None):  # noqa: E501
 
     flights_dict = [f.to_dict() for f in flights]
 
-    r = send_string_as_correlate_message("offers", [("offers", json.dumps(flights_dict))])
+    r = send_string_as_correlate_message("offers",
+                                         [("offers", json.dumps(flights_dict)), ("company_name", str(company_name))])
     return None, r.status_code
 
 
@@ -113,7 +117,9 @@ def send_payment_information(payment_information=None):  # noqa: E501
     process_instance_id = redis_connection.get(payment_information.transaction_id).decode("utf-8")
     redis_connection.close()
 
-    r = send_string_as_correlate_message("payment_status", [("payment_status", json.dumps(payment_information.to_dict()))], process_instance_id)
+    r = send_string_as_correlate_message("payment_status",
+                                         [("payment_status", json.dumps(payment_information.to_dict()))],
+                                         process_instance_id)
     if r.status_code >= 300:
         logging.error(f"Fail to send message to Camunda. Response: {r.text}")
     return None, r.status_code
